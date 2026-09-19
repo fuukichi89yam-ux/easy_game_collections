@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイゲームコレクション - ミニゲームリンク集</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Zen Maru Gothic', 'Outfit', sans-serif;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.25), 0 8px 10px -6px rgba(99, 102, 241, 0.2);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between gap-4">
+                <!-- Logo & Title -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-xl shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black tracking-wide bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+                            マイゲームコレクション
+                        </h1>
+                        <p class="text-xs text-slate-400 hidden sm:block">お気に入りのWebミニゲームをひとまとめに</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="openModal()" class="px-3.5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-500/20 transition-all flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="hidden sm:inline">ゲームを追加</span>
+                    </button>
+                    <button onclick="toggleDataMenu()" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm border border-slate-700 transition-colors cursor-pointer" title="データ管理">
+                        <i class="fa-solid fa-database"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Controls Bar -->
+        <div class="mb-8 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center bg-slate-900/50 p-4 rounded-2xl border border-slate-800/80">
+            <!-- Search Box -->
+            <div class="relative flex-grow max-w-md">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="renderGames()" placeholder="タイトルや説明で検索..." class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+            </div>
+
+            <!-- Filter & Sort -->
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <!-- Category Filter -->
+                <select id="categoryFilter" onchange="renderGames()" class="bg-slate-950 border border-slate-800 text-slate-300 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
+                    <option value="ALL">すべてのカテゴリ</option>
+                    <option value="アクション">アクション</option>
+                    <option value="パズル">パズル</option>
+                    <option value="RPG">RPG</option>
+                    <option value="シューティング">シューティング</option>
+                    <option value="ボード・カード">ボード・カード</option>
+                    <option value="その他">その他</option>
+                </select>
+
+                <!-- Sort Order -->
+                <select id="sortOrder" onchange="renderGames()" class="bg-slate-950 border border-slate-800 text-slate-300 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
+                    <option value="newest">新しい順</option>
+                    <option value="oldest">古い順</option>
+                    <option value="title">タイトル順</option>
+                    <option value="favorite">お気に入り優先</option>
+                </select>
+
+                <!-- Favorites Only Toggle -->
+                <button id="favFilterBtn" onclick="toggleFavFilter()" class="px-3 py-2.5 bg-slate-950 border border-slate-800 hover:border-amber-500/50 text-slate-400 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <span id="favFilterText" class="hidden sm:inline">★のみ</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Counter -->
+        <div class="flex items-center justify-between mb-4 text-xs text-slate-400 px-1">
+            <div>登録ゲーム: <span id="gameCount" class="font-bold text-indigo-400">0</span> 件</div>
+            <div id="activeFilterBadge" class="hidden bg-indigo-950 text-indigo-300 px-2.5 py-1 rounded-full border border-indigo-800/50">
+                フィルター適用中
+            </div>
+        </div>
+
+        <!-- Game Cards Grid -->
+        <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Dynamic Content populated by JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">
+            <div class="w-20 h-20 bg-slate-900 rounded-3xl flex items-center justify-center text-slate-600 text-3xl mb-4 border border-slate-800">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-300 mb-1">ゲームが見つかりません</h3>
+            <p class="text-sm text-slate-500 max-w-sm">条件に一致するゲームがないか、表示できるゲームがありません。</p>
+        </div>
+    </main>
+
+    <!-- Modal: Add / Edit Game -->
+    <div id="gameModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg mx-4 overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 id-modal-content">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus text-indigo-400"></i>
+                    <span>新規ゲームを追加</span>
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg transition-colors p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form id="gameForm" onsubmit="saveGame(event)" class="p-6 space-y-4">
+                <input type="hidden" id="gameId">
+
+                <!-- Title -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">ゲームタイトル <span class="text-rose-400">*</span></label>
+                    <input type="text" id="inputTitle" required placeholder="例: ブロック崩しネオ" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <!-- URL -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">URL (リンク先) <span class="text-rose-400">*</span></label>
+                    <input type="url" id="inputUrl" required placeholder="https://example.com/game" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <!-- Category & Playtime -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">ジャンル</label>
+                        <select id="inputCategory" class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                            <option value="アクション">アクション</option>
+                            <option value="パズル">パズル</option>
+                            <option value="RPG">RPG</option>
+                            <option value="シューティング">シューティング</option>
+                            <option value="ボード・カード">ボード・カード</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">1プレイ時間</label>
+                        <input type="text" id="inputMeta" placeholder="例: 1プレイ 3分" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Thumbnail Base64 Upload -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">サムネイル画像 (BASE64形式保存)</label>
+                    <div class="flex items-center gap-3">
+                        <!-- Preview Box -->
+                        <div id="thumbnailPreview" class="w-20 h-16 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center text-slate-600 flex-shrink-0 relative">
+                            <i class="fa-solid fa-image text-xl"></i>
+                        </div>
+                        
+                        <!-- File Upload Controls -->
+                        <div class="flex-grow">
+                            <input type="file" id="inputFile" accept="image/*" onchange="handleImageUpload(event)" class="hidden">
+                            <button type="button" onclick="document.getElementById('inputFile').click()" class="w-full px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-upload"></i>
+                                画像を選択 (BASE64変換)
+                            </button>
+                            <button type="button" onclick="clearThumbnail()" class="mt-1 text-[11px] text-slate-400 hover:text-rose-400 transition-colors">
+                                サムネイルを消去
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="inputBase64">
+                </div>
+
+                <!-- Flavor Text / Description -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">フレーバーテキスト / 説明</label>
+                    <textarea id="inputDescription" rows="2" placeholder="ゲームの世界観や攻略メモ、ひとことコメントなど..." class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="pt-2 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-colors">
+                        キャンセル
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-600/30 transition-all">
+                        保存する
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Data Management -->
+    <div id="dataModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md mx-4 p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-database text-purple-400"></i>
+                    データ管理 (JSON/BASE64)
+                </h3>
+                <button onclick="closeDataMenu()" class="text-slate-400 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+                登録したゲームリスト（BASE64サムネイル画像データ含む）をファイルに保存したり、バックアップから復元することができます。
+            </p>
+
+            <div class="space-y-3">
+                <!-- Export -->
+                <button onclick="exportData()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 text-sm font-bold flex items-center justify-between transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-download text-emerald-400"></i>
+                        データをバックアップ (JSON)
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
+                </button>
+
+                <!-- Import -->
+                <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" class="hidden">
+                <button onclick="document.getElementById('importFileInput').click()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 text-sm font-bold flex items-center justify-between transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-file-import text-indigo-400"></i>
+                        JSONから復元 / インポート
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
+                </button>
+
+                <!-- Reset Default -->
+                <button onclick="resetToDefaultData()" class="w-full p-3 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 rounded-xl text-sm font-bold flex items-center justify-between transition-colors">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        初期サンプルデータに戻す
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-xs text-rose-500"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Inline Game Play Frame -->
+    <div id="playModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl h-[85vh] mx-4 flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Bar -->
+            <div class="px-4 py-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span id="playModalTitle" class="font-bold text-slate-100 text-sm sm:text-base">ゲームをプレイ中</span>
+                    <a id="playExternalBtn" href="#" target="_blank" rel="noopener noreferrer" class="text-xs bg-slate-800 hover:bg-slate-700 text-indigo-400 px-2.5 py-1 rounded-lg border border-slate-700 transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i> 別タブで開く
+                    </a>
+                </div>
+                <button onclick="closePlayModal()" class="text-slate-400 hover:text-white p-1 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Frame Container -->
+            <div class="flex-grow w-full bg-black relative">
+                <iframe id="gameIframe" class="w-full h-full border-0" allow="fullscreen; autoplay"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <p>© マイゲームコレクション - あなたのミニゲームリンクポータル</p>
+    </footer>
+
+    <script>
+        // Sample Base64 / Data URI generated thumbnails for initial sample games
+        const SAMPLE_GAMES = [
+            {
+                id: '1',
+                title: '2048 ゲーム',
+                url: 'https://play2048.co/',
+                category: 'パズル',
+                meta: '1プレイ 5分',
+                description: '同じ数字のタイルを合体させて2048を目指す大人気パズルゲーム。',
+                favorite: true,
+                createdAt: Date.now() - 300000,
+                // Lightweight SVG Data URI representing Base64 Thumbnail
+                thumbnail: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%23edc22e"/><text x="50%" y="50%" font-family="sans-serif" font-weight="bold" font-size="42" fill="%23ffffff" dominant-baseline="middle" text-anchor="middle">2048</text></svg>'
+            },
+            {
+                id: '2',
+                title: 'ヘビゲーム (Snake)',
+                url: 'https://www.google.com/search?q=play+snake',
+                category: 'アクション',
+                meta: 'レトロ',
+                description: 'エサを食べて長くなるクラシックなスネークゲーム。壁や自分にぶつからないように！',
+                favorite: false,
+                createdAt: Date.now() - 200000,
+                thumbnail: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%2310b981"/><path d="M50,100 Q100,50 150,100 T250,100" stroke="%23ffffff" stroke-width="12" fill="none" stroke-linecap="round"/><circle cx="250" cy="100" r="10" fill="%23ef4444"/></svg>'
+            },
+            {
+                id: '3',
+                title: 'パックマン (Google Doodle)',
+                url: 'https://www.google.com/doodles/30th-anniversary-of-pac-man',
+                category: 'アクション',
+                meta: 'アーケード',
+                description: 'Google 30周年記念のパックマン。ブラウザ上で今すぐプレイ可能！',
+                favorite: true,
+                createdAt: Date.now() - 100000,
+                thumbnail: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%230f172a"/><path d="M150,100 L180,80 A40,40 0 1,0 180,120 Z" fill="%23facc15"/><circle cx="210" cy="100" r="6" fill="%23ffffff"/><circle cx="240" cy="100" r="6" fill="%23ffffff"/></svg>'
+            }
+        ];
+
+        // Global State
+        let games = [];
+        let filterFavOnly = false;
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            loadGames();
+            renderGames();
+        });
+
+        // Load Games from LocalStorage
+        function loadGames() {
+            const stored = localStorage.getItem('my_game_collection_data');
+            if (stored) {
+                try {
+                    games = JSON.parse(stored);
+                } catch (e) {
+                    console.error('Failed to parse localStorage data', e);
+                    games = [...SAMPLE_GAMES];
+                }
+            } else {
+                games = [...SAMPLE_GAMES];
+                saveToLocalStorage();
+            }
+        }
+
+        // Save Games to LocalStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('my_game_collection_data', JSON.stringify(games));
+        }
+
+        // Main Render Function
+        function renderGames() {
+            const grid = document.getElementById('gameGrid');
+            const emptyState = document.getElementById('emptyState');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase().trim();
+            const categoryVal = document.getElementById('categoryFilter').value;
+            const sortVal = document.getElementById('sortOrder').value;
+
+            // Filter logic
+            let filtered = games.filter(game => {
+                const matchesSearch = game.title.toLowerCase().includes(searchVal) ||
+                                      (game.description && game.description.toLowerCase().includes(searchVal));
+                const matchesCategory = categoryVal === 'ALL' || game.category === categoryVal;
+                const matchesFav = !filterFavOnly || game.favorite;
+
+                return matchesSearch && matchesCategory && matchesFav;
+            });
+
+            // Sort logic
+            filtered.sort((a, b) => {
+                if (sortVal === 'newest') return b.createdAt - a.createdAt;
+                if (sortVal === 'oldest') return a.createdAt - b.createdAt;
+                if (sortVal === 'title') return a.title.localeCompare(b.title, 'ja');
+                if (sortVal === 'favorite') return (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0);
+                return 0;
+            });
+
+            // Update Count
+            document.getElementById('gameCount').textContent = filtered.length;
+            
+            // Filter Badge Visibility
+            const hasFilter = searchVal || categoryVal !== 'ALL' || filterFavOnly;
+            document.getElementById('activeFilterBadge').classList.toggle('hidden', !hasFilter);
+
+            // Empty Check
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+
+            // Generate HTML Cards
+            grid.innerHTML = filtered.map(game => {
+                const defaultThumb = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200"><rect width="100%" height="100%" fill="%231e293b"/><text x="50%" y="50%" font-family="sans-serif" font-size="28" fill="%2364748b" dominant-baseline="middle" text-anchor="middle">No Image</text></svg>';
+                const thumbSrc = game.thumbnail && game.thumbnail.trim() !== '' ? game.thumbnail : defaultThumb;
+
+                return `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col card-hover relative group">
+                        <!-- Thumbnail Image Container -->
+                        <div class="relative w-full h-40 bg-slate-950 overflow-hidden">
+                            <img src="${escapeHtml(thumbSrc)}" alt="${escapeHtml(game.title)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${defaultThumb}'">
+                            
+                            <!-- Category Badge -->
+                            <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md border border-slate-700/60 text-indigo-300 text-[11px] font-bold px-2.5 py-1 rounded-lg">
+                                ${escapeHtml(game.category || 'その他')}
+                            </span>
+
+                            <!-- Favorite Star Button -->
+                            <button onclick="toggleFavorite('${game.id}', event)" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700/60 flex items-center justify-center text-sm transition-transform active:scale-75 cursor-pointer ${game.favorite ? 'text-amber-400' : 'text-slate-500 hover:text-amber-400'}">
+                                <i class="${game.favorite ? 'fa-solid' : 'fa-regular'} fa-star"></i>
+                            </button>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-4 flex-grow flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-start justify-between gap-2 mb-1.5">
+                                    <h3 class="font-bold text-base text-slate-100 line-clamp-1 group-hover:text-indigo-400 transition-colors">
+                                        ${escapeHtml(game.title)}
+                                    </h3>
+                                </div>
+                                ${game.meta ? `<div class="text-[11px] text-indigo-400/80 font-medium mb-2"><i class="fa-regular fa-clock text-[10px] mr-1"></i>${escapeHtml(game.meta)}</div>` : ''}
+                                <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">
+                                    ${escapeHtml(game.description || '説明なし')}
+                                </p>
+                            </div>
+
+                            <!-- Card Bottom Action Buttons -->
+                            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1">
+                                    <button onclick="editGame('${game.id}')" class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors text-xs" title="編集">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button onclick="deleteGame('${game.id}')" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors text-xs" title="削除">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-1.5">
+                                    <!-- Embedded Play Modal Launch -->
+                                    <button onclick="launchInlineGame('${escapeHtml(game.url)}', '${escapeHtml(game.title)}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer">
+                                        <i class="fa-solid fa-expand text-[10px]"></i> 枠内で遊ぶ
+                                    </button>
+                                    
+                                    <!-- Direct External Link -->
+                                    <a href="${escapeHtml(game.url)}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1">
+                                        <i class="fa-solid fa-play text-[10px]"></i> プレイ
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Convert Image File to Base64 String
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // File size validation (suggest under 2MB for browser memory ease)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('画像サイズは2MB以下を推奨します。');
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64String = e.target.result;
+                document.getElementById('inputBase64').value = base64String;
+                
+                // Update Preview UI
+                const previewBox = document.getElementById('thumbnailPreview');
+                previewBox.innerHTML = `<img src="${base64String}" class="w-full h-full object-cover">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Clear Thumbnail Selection
+        function clearThumbnail() {
+            document.getElementById('inputBase64').value = '';
+            document.getElementById('inputFile').value = '';
+            document.getElementById('thumbnailPreview').innerHTML = '<i class="fa-solid fa-image text-xl"></i>';
+        }
+
+        // Modal Controls
+        function openModal(editId = null) {
+            const modal = document.getElementById('gameModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('gameForm');
+            
+            form.reset();
+            clearThumbnail();
+
+            if (editId) {
+                const game = games.find(g => g.id === editId);
+                if (game) {
+                    document.getElementById('gameId').value = game.id;
+                    document.getElementById('inputTitle').value = game.title;
+                    document.getElementById('inputUrl').value = game.url;
+                    document.getElementById('inputCategory').value = game.category || 'その他';
+                    document.getElementById('inputMeta').value = game.meta || '';
+                    document.getElementById('inputDescription').value = game.description || '';
+                    document.getElementById('inputBase64').value = game.thumbnail || '';
+                    
+                    if (game.thumbnail) {
+                        document.getElementById('thumbnailPreview').innerHTML = `<img src="${game.thumbnail}" class="w-full h-full object-cover">`;
+                    }
+
+                    modalTitle.innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-400"></i> <span>ゲームを編集</span>`;
+                }
+            } else {
+                document.getElementById('gameId').value = '';
+                modalTitle.innerHTML = `<i class="fa-solid fa-circle-plus text-indigo-400"></i> <span>新規ゲームを追加</span>`;
+            }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.id-modal-content').classList.remove('scale-95');
+            modal.querySelector('.id-modal-content').classList.add('scale-100');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('gameModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('.id-modal-content').classList.remove('scale-100');
+            modal.querySelector('.id-modal-content').classList.add('scale-95');
+        }
+
+        // Save Game Form Submit
+        function saveGame(event) {
+            event.preventDefault();
+            const id = document.getElementById('gameId').value;
+            const title = document.getElementById('inputTitle').value.trim();
+            const url = document.getElementById('inputUrl').value.trim();
+            const category = document.getElementById('inputCategory').value;
+            const meta = document.getElementById('inputMeta').value.trim();
+            const description = document.getElementById('inputDescription').value.trim();
+            const thumbnail = document.getElementById('inputBase64').value;
+
+            if (id) {
+                // Edit existing
+                const index = games.findIndex(g => g.id === id);
+                if (index !== -1) {
+                    games[index] = {
+                        ...games[index],
+                        title,
+                        url,
+                        category,
+                        meta,
+                        description,
+                        thumbnail
+                    };
+                }
+            } else {
+                // Add new
+                const newGame = {
+                    id: Date.now().toString(),
+                    title,
+                    url,
+                    category,
+                    meta,
+                    description,
+                    thumbnail,
+                    favorite: false,
+                    createdAt: Date.now()
+                };
+                games.unshift(newGame);
+            }
+
+            saveToLocalStorage();
+            renderGames();
+            closeModal();
+        }
+
+        // Edit Button Click
+        function editGame(id) {
+            openModal(id);
+        }
+
+        // Delete Game
+        function deleteGame(id) {
+            const game = games.find(g => g.id === id);
+            if (!game) return;
+
+            if (confirm(`「${game.title}」を削除してもよろしいですか？`)) {
+                games = games.filter(g => g.id !== id);
+                saveToLocalStorage();
+                renderGames();
+            }
+        }
+
+        // Toggle Favorite
+        function toggleFavorite(id, event) {
+            event.stopPropagation();
+            const index = games.findIndex(g => g.id === id);
+            if (index !== -1) {
+                games[index].favorite = !games[index].favorite;
+                saveToLocalStorage();
+                renderGames();
+            }
+        }
+
+        // Filter Favorite Only Button Toggle
+        function toggleFavFilter() {
+            filterFavOnly = !filterFavOnly;
+            const btn = document.getElementById('favFilterBtn');
+            const text = document.getElementById('favFilterText');
+
+            if (filterFavOnly) {
+                btn.classList.add('bg-amber-500/20', 'border-amber-500', 'text-amber-300');
+                btn.classList.remove('bg-slate-950', 'border-slate-800', 'text-slate-400');
+                text.textContent = '★選択中';
+            } else {
+                btn.classList.remove('bg-amber-500/20', 'border-amber-500', 'text-amber-300');
+                btn.classList.add('bg-slate-950', 'border-slate-800', 'text-slate-400');
+                text.textContent = '★のみ';
+            }
+            renderGames();
+        }
+
+        // Launch Inline iFrame Play Modal
+        function launchInlineGame(url, title) {
+            const playModal = document.getElementById('playModal');
+            const iframe = document.getElementById('gameIframe');
+            const playTitle = document.getElementById('playModalTitle');
+            const playExternal = document.getElementById('playExternalBtn');
+
+            playTitle.textContent = title;
+            playExternal.href = url;
+            iframe.src = url;
+
+            playModal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closePlayModal() {
+            const playModal = document.getElementById('playModal');
+            const iframe = document.getElementById('gameIframe');
+            iframe.src = 'about:blank';
+            playModal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Data Menu Modal Toggle
+        function toggleDataMenu() {
+            const modal = document.getElementById('dataModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeDataMenu() {
+            const modal = document.getElementById('dataModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Export Data to JSON File (with Base64 strings)
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(games, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `my_game_collection_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        // Import Data from JSON File
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        games = imported;
+                        saveToLocalStorage();
+                        renderGames();
+                        alert('データを正常にインポートしました！');
+                        closeDataMenu();
+                    } else {
+                        alert('無効なデータ形式です。配列形式のJSONを選択してください。');
+                    }
+                } catch (err) {
+                    alert('JSONファイルの読み込みに失敗しました。');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Reset to Default Sample Data
+        function resetToDefaultData() {
+            if (confirm('登録されているデータをリセットし、初期サンプルに戻しますか？')) {
+                games = [...SAMPLE_GAMES];
+                saveToLocalStorage();
+                renderGames();
+                closeDataMenu();
+            }
+        }
+
+        // Utility: Escape HTML to Prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
