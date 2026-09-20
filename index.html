@@ -379,10 +379,12 @@
                     games = JSON.parse(stored);
                 } catch (e) {
                     console.error('Failed to parse localStorage data', e);
-                    games = [...SAMPLE_GAMES];
+                    //games = [...SAMPLE_GAMES];
+                    importDefaultData();
                 }
             } else {
-                games = [...SAMPLE_GAMES];
+                //games = [...SAMPLE_GAMES];
+                importDefaultData();
                 saveToLocalStorage();
             }
         }
@@ -733,6 +735,31 @@
             };
             reader.readAsText(file);
         }
+
+        // import Default Game Data
+        function importDefaultData(){
+            const file = "./src/my_game_collection.json";
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        games = imported;
+                        saveToLocalStorage();
+                        renderGames();
+                        alert('デフォルトデータを正常にインポートしました！');
+                        closeDataMenu();
+                    } else {
+                        alert('無効なデータ形式です。配列形式のJSONを選択してください。');
+                    }
+                } catch (err) {
+                    alert('JSONファイルの読み込みに失敗しました。');
+                }
+            };
+            reader.readAsText(file);
+        }            
 
         // Reset to Default Sample Data
         function resetToDefaultData() {
