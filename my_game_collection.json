@@ -1,0 +1,112 @@
+[
+  {
+    "id": "1789862458891",
+    "title": "レベルアップパズル",
+    "url": "https://fuukichi89yam-ux.github.io/easy_game_lvup_puzzle/",
+    "category": "パズル",
+    "meta": "1プレイ3分",
+    "description": "",
+    "thumbnail": "",
+    "favorite": false,
+    "createdAt": 1789862458891
+  },
+  {
+    "id": "1789861922996",
+    "title": "エモ花火",
+    "url": "https://fuukichi89yam-ux.github.io/easy_game_hanabi_launcher/",
+    "category": "その他",
+    "meta": "1プレイ2分",
+    "description": "",
+    "thumbnail":"",
+    "favorite": false,
+    "createdAt": 1789861922996
+  },
+  {
+    "id": "1789861805774",
+    "title": "キジトラピエールのパティスリー",
+    "url": "https://fuukichi89yam-ux.github.io/easy_game_patisserie/",
+    "category": "その他",
+    "meta": "1プレイ3分",
+    "description": "",
+    "thumbnail":"",
+    "favorite": false,
+    "createdAt": 1789861805774
+  },
+  {
+    "id": "1789861447235",
+    "title": "Go!Go!ロコモーション!ふぃ～ばぁ～",
+    "url": "https://fuukichi89yam-ux.github.io/easy_game_rhythm_train/",
+    "category": "アクション",
+    "meta": "1プレイ1分",
+    "description": "機関車を次の駅へ走らせろ！リズムに合わせて水と石炭を投入し加速しろ！",
+    "thumbnail":"",
+    "favorite": false,
+    "createdAt": 1789861447235
+  },
+  {
+    "id": "1789861296700",
+    "title": "Mine Sweeper",
+    "url": "https://fuukichi89yam-ux.github.io/easy_game_minesweeper/",
+    "category": "ボード・カード",
+    "meta": "1プレイ1分",
+    "description": "爆弾処理班！地雷を処理せよ！",
+    "favorite": false,
+    "thumbnail":"",
+    "createdAt": 1789861296700
+  },
+  {
+    "id": "1789861243569",
+    "title": "ELEMENT COMBO",
+    "url": "https://fuukichi89yam-ux.github.io/easy_game_element_combo/",
+    "category": "パズル",
+    "meta": "1プレイ5分以上",
+    "description": "原子をつなげて化合物を作れ！たくさんつないで高得点を目指せ！",
+    "favorite": false,
+    "thumbnail":"",
+    "createdAt": 1789861243569
+  },
+  {
+    "id": "1789861133586",
+    "title": "トランプゲームコレクション",
+    "url": "https://fuukichi89yam-ux.github.io/easy_game_trump_card_suite/",
+    "category": "ボード・カード",
+    "meta": "アーケード",
+    "description": "トランプゲームを遊びつくせ！",
+    "favorite": false,
+    "thumbnail":"",
+    "createdAt": 1789861133586
+  },
+  {
+    "id": "1",
+    "title": "2048 ゲーム",
+    "url": "https://play2048.co/",
+    "category": "パズル",
+    "meta": "1プレイ 5分",
+    "description": "同じ数字のタイルを合体させて2048を目指す大人気パズルゲーム。",
+    "favorite": true,
+    "createdAt": 1789860786748,
+    "thumbnail": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"200\" viewBox=\"0 0 300 200\"><rect width=\"100%\" height=\"100%\" fill=\"%23edc22e\"/><text x=\"50%\" y=\"50%\" font-family=\"sans-serif\" font-weight=\"bold\" font-size=\"42\" fill=\"%23ffffff\" dominant-baseline=\"middle\" text-anchor=\"middle\">2048</text></svg>"
+  },
+  {
+    "id": "2",
+    "title": "ヘビゲーム (Snake)",
+    "url": "https://www.google.com/search?q=play+snake",
+    "category": "アクション",
+    "meta": "レトロ",
+    "description": "エサを食べて長くなるクラシックなスネークゲーム。壁や自分にぶつからないように！",
+    "favorite": false,
+    "createdAt": 1789860886748,
+    "thumbnail": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"200\" viewBox=\"0 0 300 200\"><rect width=\"100%\" height=\"100%\" fill=\"%2310b981\"/><path d=\"M50,100 Q100,50 150,100 T250,100\" stroke=\"%23ffffff\" stroke-width=\"12\" fill=\"none\" stroke-linecap=\"round\"/><circle cx=\"250\" cy=\"100\" r=\"10\" fill=\"%23ef4444\"/></svg>"
+  },
+  {
+    "id": "3",
+    "title": "パックマン (Google Doodle)",
+    "url": "https://www.google.com/doodles/30th-anniversary-of-pac-man",
+    "category": "アクション",
+    "meta": "アーケード",
+    "description": "Google 30周年記念のパックマン。ブラウザ上で今すぐプレイ可能！",
+    "favorite": true,
+    "createdAt": 1789860986748,
+    "thumbnail": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"200\" viewBox=\"0 0 300 200\"><rect width=\"100%\" height=\"100%\" fill=\"%230f172a\"/><path d=\"M150,100 L180,80 A40,40 0 1,0 180,120 Z\" fill=\"%23facc15\"/><circle cx=\"210\" cy=\"100\" r=\"6\" fill=\"%23ffffff\"/><circle cx=\"240\" cy=\"100\" r=\"6\" fill=\"%23ffffff\"/></svg>"
+  }
+]
