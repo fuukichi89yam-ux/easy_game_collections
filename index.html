@@ -455,12 +455,12 @@
                     games = JSON.parse(stored);
                 } catch (e) {
                     console.error('Failed to parse localStorage data', e);
-                    //games = [...SAMPLE_GAMES];
-                    importDefaultData();
+                    games = [...SAMPLE_GAMES];
+                    //importDefaultData();
                 }
             } else {
-                //games = [...SAMPLE_GAMES];
-                importDefaultData();
+                games = [...SAMPLE_GAMES];
+                //importDefaultData();
                 saveToLocalStorage();
             }
         }
@@ -840,8 +840,8 @@
         // Reset to Default Sample Data
         function resetToDefaultData() {
             if (confirm('登録されているデータをリセットし、初期サンプルに戻しますか？')) {
-                //games = [...SAMPLE_GAMES];
-                importDefaultData();
+                games = [...SAMPLE_GAMES];
+                //importDefaultData();
                 saveToLocalStorage();
                 renderGames();
                 closeDataMenu();
