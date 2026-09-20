@@ -764,7 +764,8 @@
         // Reset to Default Sample Data
         function resetToDefaultData() {
             if (confirm('登録されているデータをリセットし、初期サンプルに戻しますか？')) {
-                games = [...SAMPLE_GAMES];
+                //games = [...SAMPLE_GAMES];
+                importDefaultData();
                 saveToLocalStorage();
                 renderGames();
                 closeDataMenu();
