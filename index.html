@@ -58,7 +58,10 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white relative">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- Header -->
     <header class="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80">
@@ -83,6 +86,9 @@
                         <i class="fa-solid fa-plus"></i>
                         <span class="hidden sm:inline">ゲームを追加</span>
                     </button>
+                    <button onclick="openShareModal()" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm border border-slate-700 transition-colors cursor-pointer" title="共有">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </button>
                     <button onclick="toggleDataMenu()" class="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm border border-slate-700 transition-colors cursor-pointer" title="データ管理">
                         <i class="fa-solid fa-database"></i>
                     </button>
@@ -105,7 +111,7 @@
             <!-- Filter & Sort -->
             <div class="flex flex-wrap items-center gap-2 sm:gap-3">
                 <!-- Category Filter -->
-                <select id="categoryFilter" onchange="renderGames()" class="bg-slate-950 border border-slate-800 text-slate-300 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
+                <select id="categoryFilter" onchange="renderGames()" class="bg-slate-950 border border-slate-800 text-slate-300 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500 cursor-pointer">
                     <option value="ALL">すべてのカテゴリ</option>
                     <option value="アクション">アクション</option>
                     <option value="パズル">パズル</option>
@@ -116,7 +122,7 @@
                 </select>
 
                 <!-- Sort Order -->
-                <select id="sortOrder" onchange="renderGames()" class="bg-slate-950 border border-slate-800 text-slate-300 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500">
+                <select id="sortOrder" onchange="renderGames()" class="bg-slate-950 border border-slate-800 text-slate-300 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-indigo-500 cursor-pointer">
                     <option value="newest">新しい順</option>
                     <option value="oldest">古い順</option>
                     <option value="title">タイトル順</option>
@@ -163,7 +169,7 @@
                     <i class="fa-solid fa-circle-plus text-indigo-400"></i>
                     <span>新規ゲームを追加</span>
                 </h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg transition-colors p-1">
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg transition-colors p-1 cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -215,11 +221,11 @@
                         <!-- File Upload Controls -->
                         <div class="flex-grow">
                             <input type="file" id="inputFile" accept="image/*" onchange="handleImageUpload(event)" class="hidden">
-                            <button type="button" onclick="document.getElementById('inputFile').click()" class="w-full px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2">
+                            <button type="button" onclick="document.getElementById('inputFile').click()" class="w-full px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-upload"></i>
                                 画像を選択 (BASE64変換)
                             </button>
-                            <button type="button" onclick="clearThumbnail()" class="mt-1 text-[11px] text-slate-400 hover:text-rose-400 transition-colors">
+                            <button type="button" onclick="clearThumbnail()" class="mt-1 text-[11px] text-slate-400 hover:text-rose-400 transition-colors cursor-pointer">
                                 サムネイルを消去
                             </button>
                         </div>
@@ -235,10 +241,10 @@
 
                 <!-- Submit Buttons -->
                 <div class="pt-2 flex items-center justify-end gap-3">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-colors">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm font-semibold transition-colors cursor-pointer">
                         キャンセル
                     </button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-600/30 transition-all">
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-600/30 transition-all cursor-pointer">
                         保存する
                     </button>
                 </div>
@@ -246,15 +252,45 @@
         </div>
     </div>
 
-    <!-- Modal: Data Management -->
+    <!-- Modal: Share (QR Code) -->
+    <div id="shareModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm mx-4 p-6 shadow-2xl text-center transform scale-95 transition-transform duration-300 id-share-modal-content">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-indigo-400"></i>
+                    サイトを共有
+                </h3>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-white text-lg cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-400 mb-4">スマートフォンなどで以下のQRコードを読み取るとコレクションにアクセスできます。</p>
+
+            <!-- Vector QR Code Image SVG -->
+            <div class="p-4 bg-white rounded-2xl inline-block mb-4 shadow-lg border border-slate-200">
+                <img src="data:image/png;base64,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" alt="qr_952351" style="width: 15em; height: 15em; vertical-align: -0.2em; display: inline-block;" />
+            </div>
+
+            <!-- URL Copy Section -->
+            <div class="flex items-center gap-2">
+                <input type="text" id="shareUrlInput" readonly class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none">
+                <button onclick="copyShareUrl()" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-colors whitespace-nowrap cursor-pointer">
+                    <i class="fa-solid fa-copy mr-1"></i> コピー
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Data Management (JSON/BASE64) -->
     <div id="dataModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md mx-4 p-6 shadow-2xl">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md mx-4 p-6 shadow-2xl transform scale-95 transition-transform duration-300 id-data-modal-content">
             <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
                 <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
                     <i class="fa-solid fa-database text-purple-400"></i>
                     データ管理 (JSON/BASE64)
                 </h3>
-                <button onclick="closeDataMenu()" class="text-slate-400 hover:text-white text-lg">
+                <button onclick="closeDataMenu()" class="text-slate-400 hover:text-white text-lg cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -265,7 +301,7 @@
 
             <div class="space-y-3">
                 <!-- Export -->
-                <button onclick="exportData()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 text-sm font-bold flex items-center justify-between transition-colors">
+                <button onclick="exportData()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 text-sm font-bold flex items-center justify-between transition-colors cursor-pointer">
                     <span class="flex items-center gap-2">
                         <i class="fa-solid fa-download text-emerald-400"></i>
                         データをバックアップ (JSON)
@@ -275,7 +311,7 @@
 
                 <!-- Import -->
                 <input type="file" id="importFileInput" accept=".json" onchange="importData(event)" class="hidden">
-                <button onclick="document.getElementById('importFileInput').click()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 text-sm font-bold flex items-center justify-between transition-colors">
+                <button onclick="document.getElementById('importFileInput').click()" class="w-full p-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 text-sm font-bold flex items-center justify-between transition-colors cursor-pointer">
                     <span class="flex items-center gap-2">
                         <i class="fa-solid fa-file-import text-indigo-400"></i>
                         JSONから復元 / インポート
@@ -284,12 +320,31 @@
                 </button>
 
                 <!-- Reset Default -->
-                <button onclick="resetToDefaultData()" class="w-full p-3 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 rounded-xl text-sm font-bold flex items-center justify-between transition-colors">
+                <button onclick="confirmResetData()" class="w-full p-3 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 rounded-xl text-sm font-bold flex items-center justify-between transition-colors cursor-pointer">
                     <span class="flex items-center gap-2">
                         <i class="fa-solid fa-rotate-left"></i>
                         初期サンプルデータに戻す
                     </span>
                     <i class="fa-solid fa-chevron-right text-xs text-rose-500"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Confirmation Dialog (Replaces confirm()) -->
+    <div id="confirmModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm mx-4 p-6 shadow-2xl text-center transform scale-95 transition-transform duration-300 id-confirm-modal-content">
+            <div class="w-12 h-12 bg-rose-950/80 text-rose-400 border border-rose-800/50 rounded-2xl flex items-center justify-center text-xl mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="confirmTitle" class="text-base font-bold text-slate-100 mb-2">確認</h3>
+            <p id="confirmMessage" class="text-xs text-slate-400 leading-relaxed mb-6">実行してもよろしいですか？</p>
+            <div class="flex items-center justify-center gap-3">
+                <button onclick="closeConfirmModal(false)" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-colors cursor-pointer">
+                    キャンセル
+                </button>
+                <button id="confirmSubmitBtn" onclick="closeConfirmModal(true)" class="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-rose-600/30 cursor-pointer">
+                    実行する
                 </button>
             </div>
         </div>
@@ -301,7 +356,7 @@
     </footer>
 
     <script>
-        // Sample Base64 / Data URI generated thumbnails for initial sample games
+        // Initial Sample Data with Base64 thumbnails
         const SAMPLE_GAMES = [
   {
     "id": "1789945014000",
@@ -425,15 +480,16 @@
     "thumbnail": "data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"200\" viewBox=\"0 0 300 200\"><rect width=\"100%\" height=\"100%\" fill=\"%230f172a\"/><path d=\"M150,100 L180,80 A40,40 0 1,0 180,120 Z\" fill=\"%23facc15\"/><circle cx=\"210\" cy=\"100\" r=\"6\" fill=\"%23ffffff\"/><circle cx=\"240\" cy=\"100\" r=\"6\" fill=\"%23ffffff\"/></svg>"
   }
           ];
-
-        // Global State
+        // Global Application State
         let games = [];
         let filterFavOnly = false;
+        let confirmCallback = null;
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
             loadGames();
             renderGames();
+            document.getElementById('shareUrlInput').value = window.location.href;
         });
 
         // Load Games from LocalStorage
@@ -443,7 +499,6 @@
                 try {
                     games = JSON.parse(stored);
                 } catch (e) {
-                    console.error('Failed to parse localStorage data', e);
                     games = [...SAMPLE_GAMES];
                 }
             } else {
@@ -541,10 +596,10 @@
                             <!-- Card Bottom Action Buttons -->
                             <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-1">
-                                    <button onclick="editGame('${game.id}')" class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors text-xs" title="編集">
+                                    <button onclick="editGame('${game.id}')" class="p-2 text-slate-400 hover:text-indigo-400 hover:bg-slate-800 rounded-lg transition-colors text-xs cursor-pointer" title="編集">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
-                                    <button onclick="deleteGame('${game.id}')" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors text-xs" title="削除">
+                                    <button onclick="confirmDeleteGame('${game.id}')" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors text-xs cursor-pointer" title="削除">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </div>
@@ -567,19 +622,15 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            // File size validation (suggest under 2MB for browser memory ease)
             if (file.size > 2 * 1024 * 1024) {
-                alert('画像サイズは2MB以下を推奨します。');
+                showToast('画像サイズは2MB以下を推奨します。', 'warning');
             }
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64String = e.target.result;
                 document.getElementById('inputBase64').value = base64String;
-                
-                // Update Preview UI
-                const previewBox = document.getElementById('thumbnailPreview');
-                previewBox.innerHTML = `<img src="${base64String}" class="w-full h-full object-cover">`;
+                document.getElementById('thumbnailPreview').innerHTML = `<img src="${base64String}" class="w-full h-full object-cover">`;
             };
             reader.readAsDataURL(file);
         }
@@ -591,7 +642,31 @@
             document.getElementById('thumbnailPreview').innerHTML = '<i class="fa-solid fa-image text-xl"></i>';
         }
 
-        // Modal Controls
+        // Toast Notification System
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const bgClass = type === 'success' ? 'bg-emerald-900/90 border-emerald-700 text-emerald-200' :
+                            type === 'warning' ? 'bg-amber-900/90 border-amber-700 text-amber-200' :
+                            'bg-indigo-900/90 border-indigo-700 text-indigo-200';
+            
+            toast.className = `px-4 py-3 rounded-xl border backdrop-blur-md shadow-xl text-xs font-bold flex items-center gap-2 transform translate-y-2 opacity-0 transition-all duration-300 pointer-events-auto ${bgClass}`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i> <span>${escapeHtml(message)}</span>`;
+            
+            container.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Game Modal Controls
         function openModal(editId = null) {
             const modal = document.getElementById('gameModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -623,15 +698,84 @@
             }
 
             modal.classList.remove('opacity-0', 'pointer-events-none');
-            modal.querySelector('.id-modal-content').classList.remove('scale-95');
-            modal.querySelector('.id-modal-content').classList.add('scale-100');
+            const content = modal.querySelector('.id-modal-content');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
         }
 
         function closeModal() {
             const modal = document.getElementById('gameModal');
             modal.classList.add('opacity-0', 'pointer-events-none');
-            modal.querySelector('.id-modal-content').classList.remove('scale-100');
-            modal.querySelector('.id-modal-content').classList.add('scale-95');
+            const content = modal.querySelector('.id-modal-content');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+        }
+
+        // Share Modal Controls
+        function openShareModal() {
+            const modal = document.getElementById('shareModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            const content = modal.querySelector('.id-share-modal-content');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeShareModal() {
+            const modal = document.getElementById('shareModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            const content = modal.querySelector('.id-share-modal-content');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+        }
+
+        function copyShareUrl() {
+            const input = document.getElementById('shareUrlInput');
+            input.select();
+            document.execCommand('copy');
+            showToast('URLをクリップボードにコピーしました！', 'success');
+        }
+
+        // Data Management Modal Controls
+        function toggleDataMenu() {
+            const modal = document.getElementById('dataModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            const content = modal.querySelector('.id-data-modal-content');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeDataMenu() {
+            const modal = document.getElementById('dataModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            const content = modal.querySelector('.id-data-modal-content');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+        }
+
+        // Confirmation Modal Controls
+        function showCustomConfirm(title, message, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            confirmCallback = onConfirm;
+
+            const modal = document.getElementById('confirmModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            const content = modal.querySelector('.id-confirm-modal-content');
+            content.classList.remove('scale-95');
+            content.classList.add('scale-100');
+        }
+
+        function closeConfirmModal(result) {
+            const modal = document.getElementById('confirmModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            const content = modal.querySelector('.id-confirm-modal-content');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+
+            if (result && typeof confirmCallback === 'function') {
+                confirmCallback();
+            }
+            confirmCallback = null;
         }
 
         // Save Game Form Submit
@@ -659,6 +803,7 @@
                         thumbnail
                     };
                 }
+                showToast('ゲーム情報を更新しました', 'success');
             } else {
                 // Add new
                 const newGame = {
@@ -673,6 +818,7 @@
                     createdAt: Date.now()
                 };
                 games.unshift(newGame);
+                showToast('新しいゲームを追加しました', 'success');
             }
 
             saveToLocalStorage();
@@ -680,21 +826,26 @@
             closeModal();
         }
 
-        // Edit Button Click
+        // Edit Game
         function editGame(id) {
             openModal(id);
         }
 
-        // Delete Game
-        function deleteGame(id) {
+        // Confirm Delete Game
+        function confirmDeleteGame(id) {
             const game = games.find(g => g.id === id);
             if (!game) return;
 
-            if (confirm(`「${game.title}」を削除してもよろしいですか？`)) {
-                games = games.filter(g => g.id !== id);
-                saveToLocalStorage();
-                renderGames();
-            }
+            showCustomConfirm(
+                'ゲームの削除',
+                `「${game.title}」をコレクションから削除してもよろしいですか？`,
+                () => {
+                    games = games.filter(g => g.id !== id);
+                    saveToLocalStorage();
+                    renderGames();
+                    showToast('ゲームを削除しました', 'info');
+                }
+            );
         }
 
         // Toggle Favorite
@@ -708,7 +859,7 @@
             }
         }
 
-        // Filter Favorite Only Button Toggle
+        // Filter Favorite Only Toggle
         function toggleFavFilter() {
             filterFavOnly = !filterFavOnly;
             const btn = document.getElementById('favFilterBtn');
@@ -726,18 +877,7 @@
             renderGames();
         }
 
-        // Data Menu Modal Toggle
-        function toggleDataMenu() {
-            const modal = document.getElementById('dataModal');
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-        }
-
-        function closeDataMenu() {
-            const modal = document.getElementById('dataModal');
-            modal.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-        // Export Data to JSON File (with Base64 strings)
+        // Export Data to JSON
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(games, null, 2));
             const downloadAnchor = document.createElement('a');
@@ -746,9 +886,10 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
+            showToast('JSONファイルをバックアップしました', 'success');
         }
 
-        // Import Data from JSON File
+        // Import Data from JSON
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -761,29 +902,34 @@
                         games = imported;
                         saveToLocalStorage();
                         renderGames();
-                        alert('データを正常にインポートしました！');
+                        showToast('データを正常にインポートしました！', 'success');
                         closeDataMenu();
                     } else {
-                        alert('無効なデータ形式です。配列形式のJSONを選択してください。');
+                        showToast('無効なデータ形式です。', 'warning');
                     }
                 } catch (err) {
-                    alert('JSONファイルの読み込みに失敗しました。');
+                    showToast('JSONファイルの読み込みに失敗しました。', 'warning');
                 }
             };
             reader.readAsText(file);
         }
 
-        // Reset to Default Sample Data
-        function resetToDefaultData() {
-            if (confirm('登録されているデータをリセットし、初期サンプルに戻しますか？')) {
-                games = [...SAMPLE_GAMES];
-                saveToLocalStorage();
-                renderGames();
-                closeDataMenu();
-            }
+        // Confirm Reset to Default Data
+        function confirmResetData() {
+            showCustomConfirm(
+                '初期データへのリセット',
+                '登録されているすべてのデータを初期サンプルに戻しますか？（現在の保存内容は上書きされます）',
+                () => {
+                    games = [...SAMPLE_GAMES];
+                    saveToLocalStorage();
+                    renderGames();
+                    closeDataMenu();
+                    showToast('初期サンプルデータにリセットしました', 'info');
+                }
+            );
         }
 
-        // Utility: Escape HTML to Prevent XSS
+        // Utility: Escape HTML
         function escapeHtml(str) {
             if (!str) return '';
             return String(str)
